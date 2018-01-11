@@ -1,0 +1,2291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MudletPackage>
+<MudletPackage version="1.001">
+    <TriggerPackage>
+        <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+            <name>Sea Mapping 1-July-2013 1402</name>
+            <script></script>
+            <triggerType>0</triggerType>
+            <conditonLineDelta>0</conditonLineDelta>
+            <mStayOpen>0</mStayOpen>
+            <mCommand></mCommand>
+            <packageName>Sea Mapping 1-July-2013 1402</packageName>
+            <mFgColor>#ff0000</mFgColor>
+            <mBgColor>#ffff00</mBgColor>
+            <mSoundFile></mSoundFile>
+            <colorTriggerFgColor>#000000</colorTriggerFgColor>
+            <colorTriggerBgColor>#000000</colorTriggerBgColor>
+            <regexCodeList/>
+            <regexCodePropertyList/>
+            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>Seafaring</name>
+                <script></script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>39</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList/>
+                <regexCodePropertyList/>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Ship Prompt Cryptic</name>
+                    <script>--[IVX]+
+--echo(&quot;prompt&quot;)
+--lookaccept = 0
+--disableTimer(&quot;lookacceptoff&quot;)
+yhraesheon_shipdir = multimatches[2][5]
+yhraesheon_shipspeed = tonumber(multimatches[2][6])
+yhraesheon_seaprompt()
+--if yhraesheon_onship ~= 1 then
+--	yhraesheon_onship = 1
+--if gmcp.Room then
+--	if gmcp.Room.Info.environment == &quot;Vessel&quot; then
+--		yhraesheon_onship = 1
+--		olddoSpeedWalk = doSpeedWalk
+--		doSpeedWalk = function ()
+--			--Find ID of center room
+--			--local room_search = getRoomsByPosition(YHR_areaID,centerx,100-centery,0)
+--			yhraesheon_shiptracking = 1
+--			for i = 1,#lasthighlightroom do
+--				unHighlightRoom(lasthighlightroom[i])
+--			end
+--			for i = 1,#speedWalkPath-1 do
+--				local r,g,b = unpack(color_table.yellow)
+--				local br,bg,bb = unpack(color_table.yellow)
+--				highlightRoom(speedWalkPath[i],r,g,b,br,bg,bb,0.7,255,255)
+--			end
+--			local r,g,b = unpack(color_table.green)
+--			local br,bg,bb = unpack(color_table.green)
+--			highlightRoom(speedWalkPath[#speedWalkPath],r,g,b,br,bg,bb,0.7,255,255)
+--			lasthighlightroom = speedWalkPath
+--		end
+--	end
+--end
+
+--end
+disableTrigger(&quot;Ship Map&quot;)
+if yhraesheon_quarterdeckaccept == 1 then
+--if lookaccept == 1 then
+	--echo(&quot;yes&quot;)
+	--lookaccept = 0
+	--disableTimer(&quot;lookacceptoff&quot;)
+	-- Load &quot;chars&quot; into new mudlet map region
+	YHR_temp = getAreaTable()
+	if YHR_temp[&quot;Yhraesheon_Sea&quot;] == nil then
+		yhraesheon_getnewmap()
+	elseif YHR_temp[&quot;Yhraesheon_Sea&quot;] ~= nil and (yhraesheon_offset.east ~= 0 or yhraesheon_offset.northeast ~= 0 or yhraesheon_offset.north ~= 0 or yhraesheon_offset.northwest ~= 0 or yhraesheon_offset.west ~= 0 or yhraesheon_offset.southwest ~= 0 or yhraesheon_offset.south ~= 0 or yhraesheon_offset.southeast ~= 0 or middirectioncheck == 1 or yhraesheon_quarterdeckaccept == 1) then
+		if yhraesheon_quarterdeckaccept == 1 then
+			yhraesheon_quarterdeckaccept = 0
+		end
+		if yhraesheon_shipmapwidth then
+			yhraesheon_oldshipmapwidth = yhraesheon_shipmapwidth
+			yhraesheon_oldshipmapheight = yhraesheon_shipmapheight
+			yhraesheon_shipmapwidthchange = #chars[#chars] - yhraesheon_shipmapwidth
+			yhraesheon_shipmapheightchange = #chars - yhraesheon_shipmapheight
+		end
+		yhraesheon_shipmapwidth = #chars[#chars]
+		yhraesheon_shipmapheight = #chars
+		yhraesheon_mapbuild()
+	end
+	yhraesheon_offset = {
+		east = 0,
+		northeast = 0,
+		north = 0,
+		northwest = 0,
+		west = 0,
+		southwest = 0,
+		south = 0,
+		southeast = 0,
+	}
+	y_offset = 0
+	x_offset = 0
+	local room_search2 = {}
+	local YHR_roomID2
+	room_search2 = getRoomsByPosition(YHR_areaID, yhraesheon_centerx, 100-yhraesheon_centery, 0)
+	YHR_roomID2 = room_search2[0]
+	centerview(YHR_roomID2)
+	if yhraesheon_shiptracking == 1 and yhraesheon_getdistance(YHR_roomID2, yhraesheon_targetID) &lt; 2 then
+		yhraesheon_shiptracking = 0
+	elseif yhraesheon_shiptracking == 1 then
+		yhraesheon_shipwalk()
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>= S</string>
+                        <string>^\= S(.+?)\@h[0-9\+]+,H[0-9\+]+,CE\d+\%,W\&lt;\-(N|NNE|NE|ENE|E|ESE|SE|SSE|S|SSW|SW|WSW|W|WNW|NW|NNW)@(\d+)kts,C\/S\-\&gt;(N|NNE|NE|ENE|E|ESE|SE|SSE|S|SSW|SW|WSW|W|WNW|NW|NNW)@(\d+)\,(.+?)$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Ship Prompt Normal</name>
+                    <script>--[IVX]+
+--echo(&quot;prompt&quot;)
+--lookaccept = 0
+--disableTimer(&quot;lookacceptoff&quot;)
+yhraesheon_shipdir = multimatches[2][2]
+yhraesheon_shipspeed = tonumber(multimatches[2][3])
+yhraesheon_seaprompt()
+--if yhraesheon_onship ~= 1 then
+--	yhraesheon_onship = 1
+--if gmcp.Room then
+--	if gmcp.Room.Info.environment == &quot;Vessel&quot; then
+--		yhraesheon_onship = 1
+--		olddoSpeedWalk = doSpeedWalk
+--		doSpeedWalk = function ()
+--			--Find ID of center room
+--			--local room_search = getRoomsByPosition(YHR_areaID,centerx,100-centery,0)
+--			yhraesheon_shiptracking = 1
+--			for i = 1,#lasthighlightroom do
+--				unHighlightRoom(lasthighlightroom[i])
+--			end
+--			for i = 1,#speedWalkPath-1 do
+--				local r,g,b = unpack(color_table.yellow)
+--				local br,bg,bb = unpack(color_table.yellow)
+--				highlightRoom(speedWalkPath[i],r,g,b,br,bg,bb,0.7,255,255)
+--			end
+--			local r,g,b = unpack(color_table.green)
+--			local br,bg,bb = unpack(color_table.green)
+--			highlightRoom(speedWalkPath[#speedWalkPath],r,g,b,br,bg,bb,0.7,255,255)
+--			lasthighlightroom = speedWalkPath
+--		end
+--	end
+--end
+
+--end
+disableTrigger(&quot;Ship Map&quot;)
+if yhraesheon_quarterdeckaccept == 1 then
+--if lookaccept == 1 then
+	--echo(&quot;yes&quot;)
+	--lookaccept = 0
+	--disableTimer(&quot;lookacceptoff&quot;)
+	-- Load &quot;chars&quot; into new mudlet map region
+	YHR_temp = getAreaTable()
+	if YHR_temp[&quot;Yhraesheon_Sea&quot;] == nil then
+		yhraesheon_getnewmap()
+	elseif YHR_temp[&quot;Yhraesheon_Sea&quot;] ~= nil and (yhraesheon_offset.east ~= 0 or yhraesheon_offset.northeast ~= 0 or yhraesheon_offset.north ~= 0 or yhraesheon_offset.northwest ~= 0 or yhraesheon_offset.west ~= 0 or yhraesheon_offset.southwest ~= 0 or yhraesheon_offset.south ~= 0 or yhraesheon_offset.southeast ~= 0 or middirectioncheck == 1 or yhraesheon_quarterdeckaccept == 1) then
+		if yhraesheon_quarterdeckaccept == 1 then
+			yhraesheon_quarterdeckaccept = 0
+		end
+		if yhraesheon_shipmapwidth then
+			yhraesheon_oldshipmapwidth = yhraesheon_shipmapwidth
+			yhraesheon_oldshipmapheight = yhraesheon_shipmapheight
+			yhraesheon_shipmapwidthchange = #chars[#chars] - yhraesheon_shipmapwidth
+			yhraesheon_shipmapheightchange = #chars - yhraesheon_shipmapheight
+		end
+		yhraesheon_shipmapwidth = #chars[#chars]
+		yhraesheon_shipmapheight = #chars
+		yhraesheon_mapbuild()
+	end
+	yhraesheon_offset = {
+		east = 0,
+		northeast = 0,
+		north = 0,
+		northwest = 0,
+		west = 0,
+		southwest = 0,
+		south = 0,
+		southeast = 0,
+	}
+	y_offset = 0
+	x_offset = 0
+	local room_search2 = {}
+	local YHR_roomID2
+	room_search2 = getRoomsByPosition(YHR_areaID, yhraesheon_centerx, 100-yhraesheon_centery, 0)
+	YHR_roomID2 = room_search2[0]
+	centerview(YHR_roomID2)
+	if yhraesheon_shiptracking == 1 and yhraesheon_getdistance(YHR_roomID2, yhraesheon_targetID) &lt; 2 then
+		yhraesheon_shiptracking = 0
+	elseif yhraesheon_shiptracking == 1 then
+		yhraesheon_shipwalk()
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>= </string>
+                        <string>^\= \[Sail .+?\] \[Hull\] \[Crew End\: \d+\%\] \[Wind\: \w+\@\d+ kts\] \[Crs\/Spd\: (\w+)\@(\d+)\] \[Seas\: .+?$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Ship Prompt Battle</name>
+                    <script>--[IVX]+
+--echo(&quot;prompt&quot;)
+--lookaccept = 0
+--disableTimer(&quot;lookacceptoff&quot;)
+yhraesheon_shipdir = multimatches[2][2]
+yhraesheon_shipspeed = tonumber(multimatches[2][3])
+yhraesheon_seaprompt()
+--if yhraesheon_onship ~= 1 then
+--	yhraesheon_onship = 1
+--if gmcp.Room then
+--	if gmcp.Room.Info.environment == &quot;Vessel&quot; then
+--		yhraesheon_onship = 1
+--		olddoSpeedWalk = doSpeedWalk
+--		doSpeedWalk = function ()
+--			--Find ID of center room
+--			--local room_search = getRoomsByPosition(YHR_areaID,centerx,100-centery,0)
+--			yhraesheon_shiptracking = 1
+--			for i = 1,#lasthighlightroom do
+--				unHighlightRoom(lasthighlightroom[i])
+--			end
+--			for i = 1,#speedWalkPath-1 do
+--				local r,g,b = unpack(color_table.yellow)
+--				local br,bg,bb = unpack(color_table.yellow)
+--				highlightRoom(speedWalkPath[i],r,g,b,br,bg,bb,0.7,255,255)
+--			end
+--			local r,g,b = unpack(color_table.green)
+--			local br,bg,bb = unpack(color_table.green)
+--			highlightRoom(speedWalkPath[#speedWalkPath],r,g,b,br,bg,bb,0.7,255,255)
+--			lasthighlightroom = speedWalkPath
+--		end
+--	end
+--end
+
+--end
+disableTrigger(&quot;Ship Map&quot;)
+if yhraesheon_quarterdeckaccept == 1 then
+--if lookaccept == 1 then
+	--echo(&quot;yes&quot;)
+	--lookaccept = 0
+	--disableTimer(&quot;lookacceptoff&quot;)
+	-- Load &quot;chars&quot; into new mudlet map region
+	YHR_temp = getAreaTable()
+	if YHR_temp[&quot;Yhraesheon_Sea&quot;] == nil then
+		yhraesheon_getnewmap()
+	elseif YHR_temp[&quot;Yhraesheon_Sea&quot;] ~= nil and (yhraesheon_offset.east ~= 0 or yhraesheon_offset.northeast ~= 0 or yhraesheon_offset.north ~= 0 or yhraesheon_offset.northwest ~= 0 or yhraesheon_offset.west ~= 0 or yhraesheon_offset.southwest ~= 0 or yhraesheon_offset.south ~= 0 or yhraesheon_offset.southeast ~= 0 or middirectioncheck == 1 or yhraesheon_quarterdeckaccept == 1) then
+		if yhraesheon_quarterdeckaccept == 1 then
+			yhraesheon_quarterdeckaccept = 0
+		end
+		if yhraesheon_shipmapwidth then
+			yhraesheon_oldshipmapwidth = yhraesheon_shipmapwidth
+			yhraesheon_oldshipmapheight = yhraesheon_shipmapheight
+			yhraesheon_shipmapwidthchange = #chars[#chars] - yhraesheon_shipmapwidth
+			yhraesheon_shipmapheightchange = #chars - yhraesheon_shipmapheight
+		end
+		yhraesheon_shipmapwidth = #chars[#chars]
+		yhraesheon_shipmapheight = #chars
+		yhraesheon_mapbuild()
+	end
+	yhraesheon_offset = {
+		east = 0,
+		northeast = 0,
+		north = 0,
+		northwest = 0,
+		west = 0,
+		southwest = 0,
+		south = 0,
+		southeast = 0,
+	}
+	y_offset = 0
+	x_offset = 0
+	local room_search2 = {}
+	local YHR_roomID2
+	room_search2 = getRoomsByPosition(YHR_areaID, yhraesheon_centerx, 100-yhraesheon_centery, 0)
+	YHR_roomID2 = room_search2[0]
+	centerview(YHR_roomID2)
+	if yhraesheon_shiptracking == 1 and yhraesheon_getdistance(YHR_roomID2, yhraesheon_targetID) &lt; 2 then
+		yhraesheon_shiptracking = 0
+	elseif yhraesheon_shiptracking == 1 then
+		yhraesheon_shipwalk()
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>= </string>
+                        <string>^\= Sl \w+ \- hp .+?,Hl: .+?\,CEnd \d+\%\,Wd \w+\@\d+kts\,Cr\/Sp (\w+)@(\d+)\,Sea .+?$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Ship Map</name>
+                    <script>selectCurrentLine()
+getCurrentLine()
+--echo(line)
+--copy()
+--appendBuffer(&quot;shipmap&quot;)
+--echo(&quot;shipmap&quot;, &quot;\n&quot;)
+if #line &lt; 60 and #line &gt; 4 then
+ 	color[linenumber] = {}
+	chars[linenumber] = {}
+	for i = 0, #line-1 do
+		selectSection(i, 0)
+      local r,g,b = getFgColor()
+      local br,bg,bb = getBgColor()
+--      if cr ~= r or cg ~= g or cb ~= b or cbr ~= br or cbg ~= bg or cbb ~= bb then
+--        cr,cg,cb = r,g,b
+--        cbr,cbg,cbb = br,bg,bb
+        color[linenumber][#color[#color]+1] = {r,g,b,br,bg,bb}
+        chars[linenumber][i+1] = line:sub(i+1, i+1)
+			--echo(line:sub(i+1, i+1))
+--      else
+--        color[#color][#color[#color]+1] = false
+--        chars[#chars][#chars[#chars]+1] = line:sub(i+1, i+1)
+--      end
+	end
+	if #chars &gt; 1 and #chars[#chars] ~= #chars[#chars-1] then
+		chars[#chars] = nil
+		color[#color] = nil
+		linenumber = linenumber-1
+	end
+	linenumber = linenumber+1
+end
+deselect()
+--deleteLine()</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>^.+$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
+                    <name>Quarterdeck</name>
+                    <script>enableTrigger(&quot;Ship Map&quot;)
+shipmap = {}
+clearWindow(&quot;shipmap&quot;)
+chars = {{}}
+color = {{}}
+linenumber = 1
+yhraesheon_quarterdeckaccept = 1</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#8a8a00</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>Quarterdeck of </string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Ship movement</name>
+                    <script>if lastshipmovement then
+	oldlastshipmovement = lastshipmovement
+end
+lastshipmovement = multimatches[2][2]
+if multimatches[2][2] == &quot;east&quot; or multimatches[2][2] == &quot;northeast&quot; or multimatches[2][2] == &quot;north&quot; or multimatches[2][2] == &quot;northwest&quot; or multimatches[2][2] == &quot;west&quot; or multimatches[2][2] == &quot;southwest&quot; or multimatches[2][2] == &quot;south&quot; or multimatches[2][2] == &quot;southeast&quot; then
+	yhraesheon_offset[multimatches[2][2]] = tonumber(yhraesheon_offset[multimatches[2][2]]) + 1
+	echo(yhraesheon_offset[multimatches[2][2]])
+else
+	middirectioncheck = 1
+end
+	if shipscanning == 1 and sysenabled == 1 and retardation ~= 1 and smokeaff.aeon ~= 1 then
+		send(&quot;shipscan brief&quot;, false)
+--		send(&quot;look&quot;, false)
+--		lookaccept = 1
+--		disableTimer(&quot;lookacceptoff&quot;)
+--		enableTimer(&quot;lookacceptoff&quot;)
+	end
+yhraesheon_seamapaccept = 1
+enableTrigger(&quot;Ship Map&quot;)
+shipmap = {}
+clearWindow(&quot;shipmap&quot;)
+chars = {{}}
+color = {{}}
+linenumber = 1</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>The ship moves to the</string>
+                        <string>^The ship moves to the (.+?).$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Ship drift</name>
+                    <script>lastshipmovement = multimatches[2][2]
+yhraesheon_offset[multimatches[2][2]] = tonumber(yhraesheon_offset[multimatches[2][2]]) + 1
+--if shipscanning == 1 and sysenabled == 1 and retardation ~= 1 and smokeaff.aeon ~= 1 then
+--	send(&quot;shipscan brief&quot;, false)
+--	send(&quot;look&quot;, false)
+--	lookaccept = 1
+--	disableTimer(&quot;lookacceptoff&quot;)
+--	enableTimer(&quot;lookacceptoff&quot;)
+--end
+yhraesheon_seamapaccept = 1</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>The ship drifts toward the </string>
+                        <string>^The ship drifts toward the (\w+).$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>You stride up the lowered boarding plank.</name>
+                    <script>if gmcp.Room then
+	if gmcp.Room.Info.environment == &quot;Vessel&quot; then
+		yhraesheon_onship = 1
+		olddoSpeedWalk = doSpeedWalk
+		doSpeedWalk = function ()
+			yhraesheon_shiptracking = 1
+			yhraesheonspeedWalkPath = {}
+			yhraesheonspeedWalkDir = {}
+			yhraesheon_setwallweights()
+			yhraesheon_getpath()
+			yhraesheon_shipwalk()
+		end
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>You stride up the lowered boarding plank.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>3</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>You disembark the ship via the lowered gangplank.</name>
+                    <script>if gmcp.Room then
+	if gmcp.Room.Info.environment ~= &quot;Vessel&quot; then
+		if olddoSpeedWalk then
+			doSpeedWalk = olddoSpeedWalk
+			yhraesheon_onship = 0
+		end
+		cecho(&quot;&lt;slate_gray&gt;[]: Mapping off.&quot;)
+	end
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>You disembark the ship via the lowered gangplank.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>3</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>The crew of your ship is now ready to execute another order.</name>
+                    <script>local room_search2 = {}
+local YHR_roomID2
+room_search2 = getRoomsByPosition(YHR_areaID, yhraesheon_centerx, 100-yhraesheon_centery, 0)
+YHR_roomID2 = room_search2[0]
+if yhraesheon_shiptracking == 1 and yhraesheon_getdistance(YHR_roomID2, yhraesheon_targetID) &lt; 2 then
+	yhraesheon_shiptracking = 0
+elseif yhraesheon_shiptracking == 1 then
+	yhraesheon_shipwalk()
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>The crew of your ship is now ready to execute another order.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>3</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>The ship comes out of the harbour and glides to a halt.</name>
+                    <script>if lastshipmovement then
+	oldlastshipmovement = lastshipmovement
+end
+lastshipmovement = yhraesheon_shipdir
+if yhraesheon_translatedir[yhraesheon_shipdir] == &quot;east&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;northeast&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;north&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;northwest&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;west&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;southwest&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;south&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;southeast&quot; then
+	yhraesheon_offset[yhraesheon_translatedir[yhraesheon_shipdir]] = tonumber(yhraesheon_offset[yhraesheon_translatedir[yhraesheon_shipdir]]) + 1
+else
+	middirectioncheck = 1
+end
+	if shipscanning == 1 and sysenabled == 1 and retardation ~= 1 and smokeaff.aeon ~= 1 then
+		send(&quot;shipscan brief&quot;, false)
+--		send(&quot;look&quot;, false)
+--		lookaccept = 1
+--		disableTimer(&quot;lookacceptoff&quot;)
+--		enableTimer(&quot;lookacceptoff&quot;)
+	end
+yhraesheon_seamapaccept = 1
+enableTrigger(&quot;Ship Map&quot;)
+shipmap = {}
+clearWindow(&quot;shipmap&quot;)
+chars = {{}}
+color = {{}}
+linenumber = 1</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>The ship comes out of the harbour and glides to a halt.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>3</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>The ship completes docking at the harbour, and the crew lowers the anchor.</name>
+                    <script>if lastshipmovement then
+	oldlastshipmovement = lastshipmovement
+end
+lastshipmovement = yhraesheon_shipdir
+if yhraesheon_translatedir[yhraesheon_shipdir] == &quot;east&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;northeast&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;north&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;northwest&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;west&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;southwest&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;south&quot; or yhraesheon_translatedir[yhraesheon_shipdir] == &quot;southeast&quot; then
+	yhraesheon_offset[yhraesheon_translatedir[yhraesheon_shipdir]] = tonumber(yhraesheon_offset[yhraesheon_translatedir[yhraesheon_shipdir]]) + 1
+else
+	middirectioncheck = 1
+end
+	if shipscanning == 1 and sysenabled == 1 and retardation ~= 1 and smokeaff.aeon ~= 1 then
+		send(&quot;shipscan brief&quot;, false)
+--		send(&quot;look&quot;, false)
+--		lookaccept = 1
+--		disableTimer(&quot;lookacceptoff&quot;)
+--		enableTimer(&quot;lookacceptoff&quot;)
+	end
+yhraesheon_seamapaccept = 1
+enableTrigger(&quot;Ship Map&quot;)
+shipmap = {}
+clearWindow(&quot;shipmap&quot;)
+chars = {{}}
+color = {{}}
+linenumber = 1</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>The ship completes docking at the harbour, and the crew lowers the anchor.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>3</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>The ship completes her turn</name>
+                    <script>yhraesheon_shipdir = yhraesheon_translatedir[multimatches[2][2]]
+if yhraesheon_shiptracking == 1 then
+	yhraesheon_shipwalk()
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>The ship completes her turn</string>
+                        <string>^The ship completes her turn and now faces (\w+).$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Crow's nest</name>
+                    <script>enableTrigger(&quot;Ship Map&quot;)
+shipmap = {}
+clearWindow(&quot;shipmap&quot;)
+chars = {{}}
+color = {{}}
+linenumber = 1
+yhraesheon_quarterdeckaccept = 1</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>Crow's nest.</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
+                    <name>Ship bow</name>
+                    <script>enableTrigger(&quot;Ship Map&quot;)
+shipmap = {}
+clearWindow(&quot;shipmap&quot;)
+chars = {{}}
+color = {{}}
+linenumber = 1
+yhraesheon_quarterdeckaccept = 1</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#8a8a00</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>Ship bow</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="yes" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>Wavecall</name>
+                    <script>if string.lower(yhraesheon_translatedir[multimatches[2][2]]) == string.lower(yhraesheon_wavecalldir) or yhraesheon_translatedir[multimatches[2][2]] == string.lower(yhraesheon_wavecalldir) then
+	yhraesheon_offset[multimatches[2][2]] = yhraesheon_wavecalldist
+end</script>
+                    <triggerType>0</triggerType>
+                    <conditonLineDelta>0</conditonLineDelta>
+                    <mStayOpen>0</mStayOpen>
+                    <mCommand></mCommand>
+                    <packageName></packageName>
+                    <mFgColor>#ff0000</mFgColor>
+                    <mBgColor>#ffff00</mBgColor>
+                    <mSoundFile></mSoundFile>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                    <regexCodeList>
+                        <string>A wave rises before the ship, rapidly increasing in size to an immense swell of water that slams into the ship, catapulting it to the</string>
+                        <string>^A wave rises before the ship, rapidly increasing in size to an immense swell of water that slams into the ship, catapulting it to the (\w+).$</string>
+                    </regexCodeList>
+                    <regexCodePropertyList>
+                        <integer>2</integer>
+                        <integer>1</integer>
+                    </regexCodePropertyList>
+                </Trigger>
+            </TriggerGroup>
+        </TriggerGroup>
+    </TriggerPackage>
+    <TimerPackage/>
+    <AliasPackage>
+        <AliasGroup isActive="yes" isFolder="yes">
+            <name>Sea Mapping 1-July-2013 1402</name>
+            <script></script>
+            <command></command>
+            <packageName>Sea Mapping 1-July-2013 1402</packageName>
+            <regex></regex>
+            <AliasGroup isActive="yes" isFolder="yes">
+                <name>Ship Mapping Aliases</name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^ystop$</name>
+                    <script>yhraesheon_shiptracking = 0
+cecho(&quot;&lt;slate_gray&gt;[]: Walking stopped.&quot;)</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^ystop$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^ymap (\w+)$</name>
+                    <script>if matches[2] == &quot;off&quot; then
+	if olddoSpeedWalk then
+		doSpeedWalk = olddoSpeedWalk
+	end
+	yhraesheon_onship = 0
+	cecho(&quot;&lt;slate_gray&gt;[]: Mapping off.&quot;)
+elseif matches[2] == &quot;on&quot; and yhraesheon_onship ~= 1 then
+	send(&quot;config mapshow wilderness&quot;, false)
+	send(&quot;ship prompt cryptic&quot;, false)
+if gmcp.Room then
+	if gmcp.Room.Info.environment == &quot;Vessel&quot; then
+		yhraesheon_onship = 1
+		cecho(&quot;&lt;slate_gray&gt;[]: Mapping on.&quot;)
+		if olddoSpeedWalk == nil then
+			olddoSpeedWalk = doSpeedWalk
+		end
+		doSpeedWalk = function ()
+			--Find ID of center room
+			--local room_search = getRoomsByPosition(YHR_areaID,centerx,100-centery,0)
+			yhraesheon_shiptracking = 1
+			yhraesheonspeedWalkPath = {}
+			yhraesheon_setwallweights()
+			yhraesheon_getpath()
+			yhraesheonspeedWalkDir = {}
+			for i = 2,#yhraesheonspeedWalkPath do
+				local thisexits = getRoomExits(yhraesheonspeedWalkPath[i-1])
+				for k,v in pairs (thisexits) do
+					if v == yhraesheonspeedWalkPath[i] then
+						yhraesheonspeedWalkDir[i-1] = k
+						break
+					end
+				end
+			end
+			yhraesheon_shipwalk()
+			--for i = 1,#lasthighlightroom do
+--				unHighlightRoom(lasthighlightroom[i])
+--			end
+--			for i = 1,#speedWalkPath-1 do
+--				local r,g,b = unpack(color_table.yellow)
+--				local br,bg,bb = unpack(color_table.yellow)
+--				highlightRoom(speedWalkPath[i],r,g,b,br,bg,bb,0.7,255,255)
+--			end
+--			local r,g,b = unpack(color_table.green)
+--			local br,bg,bb = unpack(color_table.green)
+--			highlightRoom(speedWalkPath[#speedWalkPath],r,g,b,br,bg,bb,0.7,255,255)
+--			lasthighlightroom = speedWalkPath
+		end
+	end
+end
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^ymap (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^clearmap$</name>
+                    <script>
+YHR_temp = getAreaTable()
+if YHR_temp[&quot;Yhraesheon_Sea&quot;] ~= nil then
+	YHR_areaID = YHR_temp[&quot;Yhraesheon_Sea&quot;]
+	deleteArea(&quot;Yhraesheon_Sea&quot;)
+	cecho(&quot;&lt;slate_gray&gt;[]: Sea map area deleted.&quot;)
+end
+yhraesheon_shiptracking = 0
+yhraesheon_rooms = {{}}
+yhraesheon_otherrooms = {{}}</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^clearmap$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^yconfig (.+)$</name>
+                    <script>if matches[2] == &quot;print&quot; then
+	if yhraesheon_roomprinting == 1 then
+		yhraesheon_roomprinting = 0
+		cecho(&quot;&lt;slate_gray&gt;[]: Not printing land and chops.&quot;)
+	else
+		yhraesheon_roomprinting = 1
+		cecho(&quot;&lt;slate_gray&gt;[]: Printing land and chops.&quot;)
+	end
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^yconfig (\w+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^yconfig (\w+) (.+)$</name>
+                    <script>if matches[2] == &quot;shiptype&quot; then
+	if matches[3] == &quot;cutter&quot; or matches[3] == &quot;windcutter&quot; then
+		yhraesheon_turnspeed = 22.5/0.815*100
+		cecho(&quot;&lt;slate_gray&gt;[]: Turn speed set to default windcutter parameters.&quot;)
+	elseif matches[3] == &quot;strider&quot; or matches[3] == &quot;seastrider&quot; then
+		cecho(&quot;&lt;slate_gray&gt;[]: Turn speed set to default seastrider parameters.&quot;)
+		yhraesheon_turnspeed = 22.5/1.6/3
+	end
+end
+if matches[2] == &quot;turnspeed&quot; then
+	yhraesheon_turnspeed = matches[3]
+	cecho(&quot;&lt;slate_gray&gt;[]: Turn speed set to custom: &quot;..matches[3]..&quot;.&quot;)
+end
+	
+if matches[2] == &quot;wallweight&quot; then
+	yhraesheon_weightcoef = matches[3]
+	cecho(&quot;&lt;slate_gray&gt;[]: Wall avoidance weight set to custom: &quot;..matches[3]..&quot;.&quot;)
+elseif matches[2] == &quot;distanceweight&quot; then
+	yhraesheon_distancecoef = matches[3]
+	cecho(&quot;&lt;slate_gray&gt;[]: Distance weight set to custom: &quot;..matches[3]..&quot;.&quot;)
+elseif matches[2] == &quot;turnweight&quot; then
+	yhraesheon_turncoef = matches[3]
+	cecho(&quot;&lt;slate_gray&gt;[]: Turn avoidance weight set to custom: &quot;..matches[3]..&quot;.&quot;)
+end
+if matches[2] == &quot;print&quot; then
+	if matches[3] == &quot;off&quot; then
+		yhraesheon_roomprinting = 0
+		cecho(&quot;&lt;slate_gray&gt;[]: Not printing land and chops.&quot;)
+	elseif matches[3] == &quot;on&quot; then
+		yhraesheon_roomprinting = 1
+		cecho(&quot;&lt;slate_gray&gt;[]: Printing land and chops.&quot;)
+	end
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^yconfig (\w+) (.+)$</regex>
+                </Alias>
+                <Alias isActive="yes" isFolder="no">
+                    <name>^invoke wavecall (\w+) (\d+)$</name>
+                    <script>send(&quot;invoke wavecall &quot;..matches[2]..&quot; &quot;..matches[3])
+if string.lower(matches[2]) == &quot;n&quot; or string.lower(matches[2]) == &quot;e&quot; or string.lower(matches[2]) == &quot;w&quot; or string.lower(matches[2]) == &quot;s&quot; or string.lower(matches[2]) == &quot;ne&quot; or string.lower(matches[2]) == &quot;nw&quot; or string.lower(matches[2]) == &quot;se&quot; or string.lower(matches[2]) == &quot;sw&quot; then
+	yhraesheon_wavecalldir = matches[2]
+	yhraesheon_wavecalldist = matches[3]
+end</script>
+                    <command></command>
+                    <packageName></packageName>
+                    <regex>^invoke wavecall (\w+) (\d+)$</regex>
+                </Alias>
+            </AliasGroup>
+        </AliasGroup>
+    </AliasPackage>
+    <ActionPackage/>
+    <ScriptPackage>
+        <ScriptGroup isActive="yes" isFolder="yes">
+            <name>Sea Mapping 1-July-2013 1402</name>
+            <packageName>Sea Mapping 1-July-2013 1402</packageName>
+            <script></script>
+            <eventHandlerList/>
+            <ScriptGroup isActive="yes" isFolder="yes">
+                <name>Sea Mapping</name>
+                <packageName></packageName>
+                <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+</script>
+                <eventHandlerList/>
+                <Script isActive="yes" isFolder="no">
+                    <name>Sea Mapping Initial Parameters</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+--EXIT MAP FOR SEA MAPPING
+exitmap = {
+  n = 1,
+  north = 1,
+  ne = 2,
+  northeast = 2,
+  nw = 3,
+  northwest = 3,
+  e = 4,
+  east = 4,
+  w = 5,
+  west = 5,
+  s = 6,
+  south = 6,
+  se = 7,
+  southeast = 7,
+  sw = 8,
+  southwest = 8,
+  u = 9,
+  up = 9,
+  d = 10,
+  down = 10,
+  [&quot;in&quot;] = 11,
+  out = 12,
+  [1] = &quot;north&quot;,
+  [2] = &quot;northeast&quot;,
+  [3] = &quot;northwest&quot;,
+  [4] = &quot;east&quot;,
+  [5] = &quot;west&quot;,
+  [6] = &quot;south&quot;,
+  [7] = &quot;southeast&quot;,
+  [8] = &quot;southwest&quot;,
+  [9] = &quot;up&quot;,
+  [10] = &quot;down&quot;,
+  [11] = &quot;in&quot;,
+  [12] = &quot;out&quot;,
+}
+yhraesheon_offset = {
+	east = 0,
+	northeast = 0,
+	north = 0,
+	northwest = 0,
+	west = 0,
+	southwest = 0,
+	south = 0,
+	southeast = 0,
+}
+lasthighlightroom = {}
+yhraesheon_translatedir = {
+  north = &quot;N&quot;,
+  northeast = &quot;NE&quot;,
+  northwest = &quot;NW&quot;,
+  east = &quot;E&quot;,
+  west = &quot;W&quot;,
+  south = &quot;S&quot;,
+  southeast = &quot;SE&quot;,
+  southwest = &quot;SW&quot;,
+  NW = &quot;northwest&quot;,
+  N = &quot;north&quot;,
+  NE = &quot;northeast&quot;,
+  E = &quot;east&quot;,
+  SE = &quot;southeast&quot;,
+  S = &quot;south&quot;,
+  SW = &quot;southwest&quot;,
+  W = &quot;west&quot;,
+}
+yhraesheon_onship = 0
+yhraesheon_shiptracking = 0
+yhraesheon_rooms = {{}}
+if yhraesheon_centerx == nil then
+	yhraesheon_centerx = 0
+	yhraesheon_centery = 0
+end
+yhraesheon_shiphighlight = {}
+yhraesheon_otherrooms = {{}}
+yhraesheon_roomprinting = 1
+yhraesheon_factor = 1.5/0.815
+yhraesheon_turnspeed = 22.5/0.815*100
+yhraesheon_weightcoef = 1
+yhraesheon_turncoef = 5
+yhraesheon_distancecoef = 1</script>
+                    <eventHandlerList/>
+                </Script>
+                <Script isActive="yes" isFolder="no">
+                    <name>Sea Mapping Scripts</name>
+                    <packageName></packageName>
+                    <script>-------------------------------------------------
+--         Put your Lua functions here.        --
+--                                             --
+-- Note that you can also use external Scripts --
+-------------------------------------------------
+
+--FUNCTION TO DELETE CURRENT SEA MAP
+yhraesheon_deletemap = function ()
+	YHR_temp = getAreaTable()
+	if YHR_temp[&quot;Yhraesheon_Sea&quot;] then
+		YHR_areaID = YHR_temp[&quot;Yhraesheon_Sea&quot;]
+		deleteArea(&quot;Yhraesheon_Sea&quot;)
+		cecho(&quot;&lt;slate_gray&gt;[]: Sea map area deleted.&quot;)
+	else
+		cecho(&quot;&lt;slate_gray&gt;[]: No sea map found.&quot;)
+	end
+	yhraesheon_rooms = {{}}
+	yhraesheon_otherrooms = {{}}
+end
+
+
+--FUNCTION TO GET A NEW SEA MAP IF NONE EXISTS
+yhraesheon_getnewmap = function ()
+	yhraesheon_getnewmap_t = yhraesheon_getnewmap_t or createStopWatch()
+	startStopWatch(yhraesheon_getnewmap_t)
+
+	local yhraesheon_createroomid, addRoom, setRoomCoordinates, yhraesheon_rooms, setRoomArea, unpack, chars, highlightRoom, getRoomsByPosition, setExit, exitmap
+		= yhraesheon_createroomid, addRoom, setRoomCoordinates, yhraesheon_rooms, setRoomArea, unpack, chars, highlightRoom, getRoomsByPosition, setExit, exitmap
+
+	local ceil = math.ceil
+
+	YHR_temp = getAreaTable()
+	if YHR_temp[&quot;Yhraesheon_Sea&quot;] == nil then
+		middirectioncheck = 0
+		YHR_areaID = addAreaName(&quot;Yhraesheon_Sea&quot;)
+
+		-- go through our matrix, spawn all the rooms
+		for i = 1,#chars do
+			for ii = 1,#chars[#chars] do
+				if chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot; then
+					local YHR_roomID = yhraesheon_createroomid()
+					addRoom(YHR_roomID)
+					setRoomCoordinates(YHR_roomID,ii,100-i,0)
+					yhraesheon_rooms[ii] = yhraesheon_rooms[ii] or {}
+					yhraesheon_rooms[ii][100-i] = YHR_roomID
+					setRoomArea(YHR_roomID, YHR_areaID)
+					if chars[i][ii] == &quot;=&quot; then
+						if i == ceil(#chars/2) and ii == ceil(#chars[#chars]/2) then
+							yhraesheon_centery = i
+							yhraesheon_centerx = ii
+						end
+					end
+					if chars[i][ii] == &quot;?&quot; then
+						local r,g,b = unpack(color_table.blue)
+						local br,bg,bb = unpack(color_table.green)
+						highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+					end
+
+
+				end
+			end
+		end
+
+		--print(&quot;yhraesheon_getnewmap halfway: &quot;..getStopWatchTime(yhraesheon_getnewmap_t))
+
+		-- and now go through the matrix to link all the rooms up
+		for i = 1,#chars do
+			for ii = 1,#chars[#chars] do
+				local YHR_roomID = (yhraesheon_rooms[ii] and yhraesheon_rooms[ii][100-i])
+				if chars[i][ii] == &quot; &quot;  or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot; then
+					if i-1 &gt; 0 and ii - 1 &gt; 0 and (chars[i-1][ii-1] == &quot; &quot; or chars[i-1][ii-1] == &quot;=&quot; or chars[i-1][ii-1] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii-1][100-i+1]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.nw)
+					end
+					if i-1 &gt; 0 and (chars[i-1][ii] == &quot; &quot; or chars[i-1][ii] == &quot;=&quot; or chars[i-1][ii] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii][100-i+1]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.n)
+					end
+					if i-1 &gt; 0 and ii+1 &lt; #chars[#chars]+1 and (chars[i-1][ii+1] == &quot; &quot; or chars[i-1][ii+1] == &quot;=&quot; or chars[i-1][ii+1] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii+1][100-i+1]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.ne)
+					end
+					if ii+1 &lt; #chars[#chars]+1 and (chars[i][ii+1] == &quot; &quot; or chars[i][ii+1] == &quot;=&quot; or chars[i][ii+1] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii+1][100-i]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.e)
+					end
+					if i+1 &lt; #chars+1 and ii+1 &lt; #chars[#chars]+1 and (chars[i+1][ii+1] == &quot; &quot; or chars[i+1][ii+1] == &quot;=&quot; or chars[i+1][ii+1] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii+1][100-i-1]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.se)
+					end
+					if i+1 &lt; #chars+1 and (chars[i+1][ii] == &quot; &quot; or chars[i+1][ii] == &quot;=&quot; or chars[i+1][ii] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii][100-i-1]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.s)
+					end
+					if i+1 &lt; #chars+1 and ii-1 &gt; 0 and (chars[i+1][ii-1] == &quot; &quot; or chars[i+1][ii-1] == &quot;=&quot; or chars[i+1][ii-1] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii-1][100-i-1]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.sw)
+					end
+					if ii-1 &gt; 0 and (chars[i][ii-1] == &quot; &quot; or chars[i][ii-1] == &quot;=&quot; or chars[i][ii-1] == &quot;?&quot;) then
+						local YHR_roomID2 = yhraesheon_rooms[ii-1][100-i]
+						setExit(YHR_roomID,YHR_roomID2,exitmap.w)
+					end
+				end
+			end
+		end
+		cecho(&quot; &lt;slate_gray&gt;[]: Map acquired.&quot;)
+
+		centerview(yhraesheon_rooms[yhraesheon_centerx][100-yhraesheon_centery])
+		if yhraesheon_roomprinting == 1 then
+			yhraesheon_printmaprooms()
+		end
+	end
+	--print(&quot;yhraesheon_getnewmap finished: &quot;..stopStopWatch(yhraesheon_getnewmap_t))
+end
+
+
+--FUNCTION TO PROCESS MOVEMENT AND APPEND MAP
+yhraesheon_mapbuild = function ()
+	yhraesheon_mapbuild_t = yhraesheon_mapbuild_t or createStopWatch()
+	startStopWatch(yhraesheon_mapbuild_t)
+
+	local yhraesheon_createroomid = yhraesheon_createroomid
+	local addRoom = addRoom
+	local setRoomCoordinates = setRoomCoordinates
+	local getRoomsByPosition = getRoomsByPosition
+	local setRoomArea = setRoomArea
+	local getRoomCoordinates = getRoomCoordinates
+	local setExit = setExit
+	local floor, ceil = math.floor, math.ceil
+
+	local chars, yhraesheon_rooms = chars, yhraesheon_rooms
+
+	ytime4 = ytime4 or createStopWatch()
+	startStopWatch(ytime4)
+	yhraesheon_shipmatch()
+	local endtime4 = stopStopWatch(ytime4)
+	cecho(&quot;&lt;slate_gray&gt; []: Map matching took &quot;..endtime4..&quot; seconds.&quot;)
+	if middirectioncheck == 1 then
+			middirectioncheck = 0
+			local lastshipmovement = lastshipmovement
+			if lastshipmovement == &quot;north-northeast&quot; then
+				x_offset_check1 = 0
+				y_offset_check1 = -1
+				x_offset_check2 = -1
+				y_offset_check2 = -1
+				middirection1 = &quot;north&quot;
+				middirection2 = &quot;northeast&quot;
+			elseif lastshipmovement == &quot;north-northwest&quot; then
+				x_offset_check1 = 0
+				y_offset_check1 = -1
+				x_offset_check2 = 1
+				y_offset_check2 = -1
+				middirection1 = &quot;north&quot;
+				middirection2 = &quot;northwest&quot;
+			elseif lastshipmovement == &quot;west-northwest&quot; then
+				x_offset_check1 = 1
+				y_offset_check1 = 0
+				x_offset_check2 = 1
+				y_offset_check2 = -1
+				middirection1 = &quot;west&quot;
+				middirection2 = &quot;northwest&quot;
+			elseif lastshipmovement == &quot;west-southwest&quot; then
+				x_offset_check1 = 1
+				y_offset_check1 = 0
+				x_offset_check2 = 1
+				y_offset_check2 = 1
+				middirection1 = &quot;west&quot;
+				middirection2 = &quot;southwest&quot;
+			elseif lastshipmovement == &quot;south-southwest&quot; then
+				x_offset_check1 = 0
+				y_offset_check1 = 1
+				x_offset_check2 = 1
+				y_offset_check2 = 1
+				middirection1 = &quot;south&quot;
+				middirection2 = &quot;southwest&quot;
+			elseif lastshipmovement == &quot;south-southeast&quot; then
+				x_offset_check1 = 0
+				y_offset_check1 = 1
+				x_offset_check2 = -1
+				y_offset_check2 = 1
+				middirection1 = &quot;south&quot;
+				middirection2 = &quot;southeast&quot;
+			elseif lastshipmovement == &quot;east-southeast&quot; then
+				x_offset_check1 = -1
+				y_offset_check1 = 0
+				x_offset_check2 = -1
+				y_offset_check2 = 1
+				middirection1 = &quot;east&quot;
+				middirection2 = &quot;southeast&quot;
+			elseif lastshipmovement == &quot;east-northeast&quot; then
+				x_offset_check1 = -1
+				y_offset_check1 = 0
+				x_offset_check2 = -1
+				y_offset_check2 = -1
+				middirection1 = &quot;east&quot;
+				middirection2 = &quot;northeast&quot;
+			end
+			shipmapmatch1 = true
+			shipmapmatch2 = true
+			for i = 2,#chars-1 do
+				for ii = 2,#chars[#chars]-1 do
+					if chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot; then
+						if yhraesheon_rooms[yhraesheon_centerx - floor(#chars[#chars]/2) - 1 + ii - x_offset_check1] == nil or yhraesheon_rooms[yhraesheon_centerx - floor(#chars[#chars]/2) - 1 + ii - x_offset_check1][100 - yhraesheon_centery + floor(#chars/2) + 1 - i - y_offset_check1] == nil then
+							shipmapmatch1 = false
+							break
+						end
+					end
+				end
+				if shipmapmatch1 == false then
+					break
+				end
+			end
+			for i = 2,#chars-1 do
+				for ii = 2,#chars[#chars]-1 do
+					if chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot; then
+						if yhraesheon_rooms[yhraesheon_centerx - floor(#chars[#chars]/2) - 1 + ii - x_offset_check2] == nil or yhraesheon_rooms[yhraesheon_centerx - floor(#chars[#chars]/2) - 1 + ii - x_offset_check2][100 - yhraesheon_centery + floor(#chars/2) + 1 - i - y_offset_check2] == nil then
+							shipmapmatch2 = false
+							break
+						end
+					end
+				end
+				if shipmapmatch2 == false then
+					break
+				end
+			end
+
+			if shipmapmatch1 == false and shipmapmatch2 == true then
+				yhraesheon_offset[middirection2] = 1
+				mid_direction_bool = 1
+				cecho(&quot;&lt;slate_gray&gt;[]: Mid direction detected on mid movement.&quot;)
+			elseif shipmapmatch1 == true and shipmapmatch2 == false then
+				yhraesheon_offset[middirection1] = 1
+				mid_direction_bool = 0
+				cecho(&quot;&lt;slate_gray&gt;[]: Cardinal direction detected on mid movement.&quot;)
+			elseif mid_direction_bool ~= nil and oldlastshipmovement ~= nil then
+				-- if true, nnw went nw, if false, nnw went n
+				if oldlastshipmovement == &quot;stop&quot; or oldlastshipmovement == &quot;east&quot; or oldlastshipmovement == &quot;northeast&quot; or oldlastshipmovement == &quot;north&quot; or oldlastshipmovement == &quot;northwest&quot; or oldlastshipmovement == &quot;west&quot; or oldlastshipmovement == &quot;southwest&quot; or oldlastshipmovement == &quot;south&quot; or oldlastshipmovement == &quot;southeast&quot; then
+					if mid_direction_bool == 1 then
+						yhraesheon_offset[middirection2] = 1
+						mid_direction_bool = 0
+					else
+						yhraesheon_offset[middirection1] = 1
+						mid_direction_bool = 1
+					end
+				else
+					if mid_direction_bool == 1 then
+						yhraesheon_offset[middirection1] = 1
+						mid_direction_bool = 0
+					else
+						yhraesheon_offset[middirection2] = 1
+						mid_direction_bool = 1
+					end
+				end
+			else
+				yhraesheon_deletemap()
+				yhraesheon_getnewmap()
+			end
+		end
+		x_offset = yhraesheon_offset.east-yhraesheon_offset.west
+		y_offset = yhraesheon_offset.north-yhraesheon_offset.south
+		for i = 1, yhraesheon_offset.northeast do
+			x_offset = x_offset + 1
+			y_offset = y_offset + 1
+		end
+		for i = 1, yhraesheon_offset.southeast do
+			x_offset = x_offset + 1
+			y_offset = y_offset - 1
+		end
+		for i = 1, yhraesheon_offset.northwest do
+			x_offset = x_offset - 1
+			y_offset = y_offset + 1
+		end
+		for i = 1, yhraesheon_offset.southwest do
+			x_offset = x_offset - 1
+			y_offset = y_offset - 1
+		end
+		local x_offset, y_offset  = x_offset, y_offset
+
+		yhraesheon_centerx = yhraesheon_centerx + x_offset
+		yhraesheon_centery = yhraesheon_centery - y_offset
+
+		local yhraesheon_centerx, yhraesheon_centery = yhraesheon_centerx, yhraesheon_centery
+
+		YHR_areaID = YHR_temp[&quot;Yhraesheon_Sea&quot;]
+
+		ytime2 = ytime2 or createStopWatch()
+		startStopWatch(ytime2)
+
+		local endind
+		local newrooms = {}
+
+		--print(&quot;yhraesheon_mapbuild_t before offset work: &quot;..getStopWatchTime(yhraesheon_mapbuild_t))
+		local yhraesheon_createroomid, addRoom, setRoomCoordinates, setRoomArea, highlightRoom =
+			yhraesheon_createroomid, addRoom, setRoomCoordinates, setRoomArea, highlightRoom
+
+		if y_offset == 0 and x_offset == 0 and yhraesheon_shipmapheightchange ~= nil and yhraesheon_shipmapheightchange &gt; 0 then
+			endind = #chars-yhraesheon_shipmapheightchange/2+1
+			for i = endind,#chars do
+				for ii = 1,#chars[#chars] do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] == nil or yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset - floor(yhraesheon_oldshipmapheight/2)-(#chars-endind+1-(#chars-i))] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-ceil(#chars[#chars]/2)+ii,100-yhraesheon_centery - y_offset - floor(yhraesheon_oldshipmapheight/2)-(#chars-endind+1-(#chars-i)),0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset - floor(yhraesheon_oldshipmapheight/2)-(#chars-endind+1-(#chars-i))] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+			endind = yhraesheon_shipmapheightchange/2
+			for i = 1,endind do
+				for ii = 1,#chars[#chars] do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii]==nil or yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset + floor(yhraesheon_oldshipmapheight/2)+(endind-i+1)] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-ceil(#chars[#chars]/2)+ii,100-yhraesheon_centery - y_offset + floor(yhraesheon_oldshipmapheight/2)+(endind+1-i),0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset + floor(yhraesheon_oldshipmapheight/2)+(endind+1-i)] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+		end
+		if x_offset == 0 and y_offset == 0 and yhraesheon_shipmapwidthchange ~= nil and yhraesheon_shipmapwidthchange &gt; 0 then
+			endind = yhraesheon_shipmapwidthchange/2
+			for i = 1,#chars do
+				for ii = 1,endind do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1] == nil or yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1][100-yhraesheon_centery + floor(#chars/2)-i+1] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1,100-yhraesheon_centery + floor(#chars/2)-i+1,0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1][100-yhraesheon_centery + floor(#chars/2)-i+1] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+			endind = #chars[#chars]-yhraesheon_shipmapwidthchange/2+1
+			for i = 1,#chars do
+				for ii = endind,#chars[#chars] do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))] == nil or yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))][100-yhraesheon_centery + floor(#chars/2)-i+1] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1)),100-yhraesheon_centery + floor(#chars/2)-i+1,0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))][100-yhraesheon_centery + floor(#chars/2)-i+1] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+		end
+		if y_offset &gt; 0 then
+			if yhraesheon_shipmapheightchange ~= nil and yhraesheon_shipmapheightchange ~= 0 then
+				endind = y_offset + yhraesheon_shipmapheightchange/2
+			else
+				endind = y_offset
+			end
+			for i = 1,endind do
+				for ii = 1,#chars[#chars] do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii]==nil or yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset + floor(yhraesheon_oldshipmapheight/2)+(endind-i+1)] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-ceil(#chars[#chars]/2)+ii,100-yhraesheon_centery - y_offset + floor(yhraesheon_oldshipmapheight/2)+(endind+1-i),0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset + floor(yhraesheon_oldshipmapheight/2)+(endind+1-i)] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+		end
+		if y_offset &lt; 0 then
+			if yhraesheon_shipmapheightchange ~= nil and yhraesheon_shipmapheightchange ~= 0 then
+				endind = #chars + y_offset - yhraesheon_shipmapheightchange/2 + 1
+			else
+				endind = #chars+y_offset+1
+			end
+			for i = endind,#chars do
+				for ii = 1,#chars[#chars] do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] == nil or yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset - floor(yhraesheon_oldshipmapheight/2)-(#chars-endind+1-(#chars-i))] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-ceil(#chars[#chars]/2)+ii,100-yhraesheon_centery - y_offset - floor(yhraesheon_oldshipmapheight/2)-(#chars-endind+1-(#chars-i)),0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery - y_offset - floor(yhraesheon_oldshipmapheight/2)-(#chars-endind+1-(#chars-i))] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+		end
+		if x_offset &gt; 0 then
+			if yhraesheon_shipmapwidthchange ~= nil and yhraesheon_shipmapwidthchange ~= 0 then
+				endind = #chars[#chars]-x_offset-yhraesheon_shipmapwidthchange/2+1
+			else
+				endind = #chars[#chars]-x_offset+1
+			end
+			for i = 1,#chars do
+				for ii = endind,#chars[#chars] do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))] == nil or yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))][100-yhraesheon_centery + floor(#chars/2)-i+1] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1)),100-yhraesheon_centery + floor(#chars/2)-i+1,0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-x_offset+floor(yhraesheon_oldshipmapwidth/2)+(ii-(endind-1))][100-yhraesheon_centery + floor(#chars/2)-i+1] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+		end
+		if x_offset &lt; 0 then
+			if yhraesheon_shipmapwidthchange ~= nil and yhraesheon_shipmapwidthchange ~= 0 then
+				endind = x_offset*-1+yhraesheon_shipmapwidthchange/2
+			else
+				endind = x_offset*-1
+			end
+			for i = 1,#chars do
+				for ii = 1,endind do
+					if (chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot;) and (yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1] == nil or yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1][100-yhraesheon_centery + floor(#chars/2)-i+1] == nil) then
+						local YHR_roomID = yhraesheon_createroomid()
+						addRoom(YHR_roomID)
+						setRoomCoordinates(YHR_roomID,yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1,100-yhraesheon_centery + floor(#chars/2)-i+1,0)
+						setRoomArea(YHR_roomID, YHR_areaID)
+						if yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1] == nil then
+							yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1] = {}
+						end
+						yhraesheon_rooms[yhraesheon_centerx-x_offset-floor(#chars[#chars]/2)+x_offset+ii-1][100-yhraesheon_centery + floor(#chars/2)-i+1] = YHR_roomID
+						newrooms[YHR_roomID] = 1
+						if chars[i][ii] == &quot;?&quot; then
+							local r,g,b = unpack(color_table.green)
+							local br,bg,bb = unpack(color_table.blue)
+							highlightRoom(YHR_roomID, r,g,b,br,bg,bb,2,255,255)
+						end
+					end
+				end
+			end
+		end
+
+		--print(&quot;yhraesheon_mapbuild_t after offset work: &quot;..getStopWatchTime(yhraesheon_mapbuild_t))
+		local endtime2 = stopStopWatch(ytime2)
+
+		ytime3 = ytime3 or createStopWatch()
+		startStopWatch(ytime3)
+		local room_search2 = {}
+
+		-- link up the new rooms created
+		local getRoomCoordinates, exitmap = getRoomCoordinates, exitmap
+		for k,v in pairs (newrooms) do
+			local x,y,z = getRoomCoordinates(k)
+			if yhraesheon_rooms[x-1] and yhraesheon_rooms[x-1][y+1] ~= nil then
+				setExit(k,yhraesheon_rooms[x-1][y+1],exitmap.nw)
+				setExit(yhraesheon_rooms[x-1][y+1],k,exitmap.se)
+			end
+			if yhraesheon_rooms[x] and yhraesheon_rooms[x][y+1] ~= nil then
+				setExit(k,yhraesheon_rooms[x][y+1],exitmap.n)
+				setExit(yhraesheon_rooms[x][y+1],k,exitmap.s)
+			end
+			if yhraesheon_rooms[x+1] and yhraesheon_rooms[x+1][y+1] ~= nil then
+				setExit(k,yhraesheon_rooms[x+1][y+1],exitmap.ne)
+				setExit(yhraesheon_rooms[x+1][y+1],k,exitmap.sw)
+			end
+			if yhraesheon_rooms[x+1] and yhraesheon_rooms[x+1][y] ~= nil then
+				setExit(k,yhraesheon_rooms[x+1][y],exitmap.e)
+				setExit(yhraesheon_rooms[x+1][y],k,exitmap.w)
+			end
+			if yhraesheon_rooms[x+1] and yhraesheon_rooms[x+1][y-1] ~= nil then
+				setExit(k,yhraesheon_rooms[x+1][y-1],exitmap.se)
+				setExit(yhraesheon_rooms[x+1][y-1],k,exitmap.nw)
+			end
+			if yhraesheon_rooms[x] and yhraesheon_rooms[x][y-1] ~= nil then
+				setExit(k,yhraesheon_rooms[x][y-1],exitmap.s)
+				setExit(yhraesheon_rooms[x][y-1],k,exitmap.n)
+			end
+			if yhraesheon_rooms[x-1] and yhraesheon_rooms[x-1][y-1] ~= nil then
+				setExit(k,yhraesheon_rooms[x-1][y-1],exitmap.sw)
+				setExit(yhraesheon_rooms[x-1][y-1],k,exitmap.ne)
+			end
+			if yhraesheon_rooms[x-1] and yhraesheon_rooms[x-1][y] ~= nil then
+				setExit(k,yhraesheon_rooms[x-1][y],exitmap.w)
+				setExit(yhraesheon_rooms[x-1][y],k,exitmap.e)
+			end
+		end
+
+		--print(&quot;yhraesheon_mapbuild_t after linking exits: &quot;..getStopWatchTime(yhraesheon_mapbuild_t))
+		local endtime3 = stopStopWatch(ytime3)
+		cecho(&quot;\n&lt;slate_gray&gt;Room creation took &quot;..endtime2..&quot; seconds.&quot;)
+		cecho(&quot;\n&lt;slate_gray&gt;Exits took &quot;..endtime3..&quot; seconds.&quot;)
+		--print(&quot;yhraesheon_mapbuild_t before yhraesheon_otherships: &quot;..getStopWatchTime(yhraesheon_mapbuild_t))
+		yhraesheon_otherships()
+		--print(&quot;yhraesheon_mapbuild_t after yhraesheon_otherships: &quot;..getStopWatchTime(yhraesheon_mapbuild_t))
+		if yhraesheon_roomprinting == 1 then
+			--print(&quot;yhraesheon_mapbuild_t before yhraesheon_printmaprooms: &quot;..getStopWatchTime(yhraesheon_mapbuild_t))
+			yhraesheon_printmaprooms()
+			--print(&quot;yhraesheon_mapbuild_t after yhraesheon_printmaprooms: &quot;..getStopWatchTime(yhraesheon_mapbuild_t))
+		end
+	--print(&quot;yhraesheon_mapbuild finished: &quot;..stopStopWatch(yhraesheon_mapbuild_t))
+end
+
+
+--FUNCTION TO PROCESS ON PROMPT
+yhraesheon_seaprompt = function ()
+	disableTrigger(&quot;Ship Map&quot;)
+	if yhraesheon_shipmapwidth then
+		yhraesheon_oldshipmapwidth = yhraesheon_shipmapwidth
+		yhraesheon_oldshipmapheight = yhraesheon_shipmapheight
+		yhraesheon_shipmapwidthchange = #chars[#chars] - yhraesheon_shipmapwidth
+		yhraesheon_shipmapheightchange = #chars - yhraesheon_shipmapheight
+	else
+		yhraesheon_oldshipmapwidth = #chars[#chars]
+		yhraesheon_oldshipmapheight = #chars
+	end
+	yhraesheon_shipmapwidth = #chars[#chars]
+	yhraesheon_shipmapheight = #chars
+	if yhraesheon_seamapaccept == 1 or yhraesheon_quarterdeckaccept == 1 then
+		yhraesheon_seamapaccept = 0
+		--disableTimer(&quot;lookacceptoff&quot;)
+		-- Load &quot;chars&quot; into new mudlet map region
+		YHR_temp = getAreaTable()
+		if YHR_temp[&quot;Yhraesheon_Sea&quot;] == nil then
+			yhraesheon_getnewmap()
+		elseif YHR_temp[&quot;Yhraesheon_Sea&quot;] ~= nil and (yhraesheon_offset.east ~= 0 or yhraesheon_offset.northeast ~= 0 or yhraesheon_offset.north ~= 0 or yhraesheon_offset.northwest ~= 0 or yhraesheon_offset.west ~= 0 or yhraesheon_offset.southwest ~= 0 or yhraesheon_offset.south ~= 0 or yhraesheon_offset.southeast ~= 0 or middirectioncheck == 1 or yhraesheon_quarterdeckaccept == 1) then
+			yhraesheon_quarterdeckaccept = 0
+			yhraesheon_mapbuild()
+		end
+		yhraesheon_offset = {
+			east = 0,
+			northeast = 0,
+			north = 0,
+			northwest = 0,
+			west = 0,
+			southwest = 0,
+			south = 0,
+			southeast = 0,
+		}
+	--	echo(&quot;offset reset&quot;)
+		y_offset = 0
+		x_offset = 0
+		local room_search2 = {}
+		local YHR_roomID2
+		room_search2 = getRoomsByPosition(YHR_areaID, yhraesheon_centerx, 100-yhraesheon_centery, 0)
+		YHR_roomID2 = room_search2[0]
+		centerview(YHR_roomID2)
+		if yhraesheon_shiptracking == 1 and yhraesheon_getdistance(YHR_roomID2, yhraesheon_targetID) &lt; 0.9 then
+			yhraesheon_shiptracking = 0
+		elseif yhraesheon_shiptracking == 1 then
+			yhraesheon_shipwalk()
+		end
+	end
+end
+
+
+--FUNCTION TO SET WEIGHTS ACROSS ENTIRE MAP
+yhraesheon_setwallweights = function ()
+	local area_rooms = getAreaRooms(YHR_areaID)
+	for i = 1,#area_rooms do
+		--if adjacent to wall
+		if table.size(getRoomExits(area_rooms[i])) &lt; 8 then
+			local tempexits = {}
+			local tempval = 0
+			tempexits = getRoomExits(area_rooms[i])
+			if tempexits.north == nil then
+				tempval = tempval + 2
+			end
+			if tempexits.south == nil then
+				tempval = tempval + 2
+			end
+			if tempexits.east == nil then
+				tempval = tempval + 2
+			end
+			if tempexits.west == nil then
+				tempval = tempval + 2
+			end
+			if tempexits.northwest == nil then
+				tempval = tempval + 1
+			end
+			if tempexits.northeast == nil then
+				tempval = tempval + 1
+			end
+			if tempexits.southwest == nil then
+				tempval = tempval + 1
+			end
+			if tempexits.southeast == nil then
+				tempval = tempval + 1
+			end
+			setRoomWeight(area_rooms[i], tempval)--11-table.size(getRoomExits(area_rooms[i]))
+		end
+	end
+
+	local centerview, getRoomWeight, getRoomExits, setRoomWeight = centerview, getRoomWeight, getRoomExits, setRoomWeight
+	for ii = 1,3 do
+		for i = 1,#area_rooms do
+			centerview(area_rooms[i])
+			if getRoomWeight(area_rooms[i]) == 1 then
+				local maxval = 999
+				for k,v in pairs (getRoomExits(area_rooms[i])) do
+					centerview(v)
+					if tonumber(getRoomWeight(v)) ~= 1 and tonumber(getRoomWeight(v)) &lt; tonumber(maxval) then
+						maxval = getRoomWeight(v)
+					end
+					if maxval == 999 then
+						maxval = 1
+					end
+				end
+				if maxval &gt; 1 then
+					if maxval - 2 &lt; 1 then
+						setRoomWeight(area_rooms[i], (maxval-1))
+					else
+						setRoomWeight(area_rooms[i], (maxval-2))
+					end
+
+		--			echo(&quot;: &quot;..(maxval-1)..&quot;\n&quot;)
+		--			echo(&quot;is &quot;..getRoomWeight(area_rooms[i])..&quot;\n&quot;)
+				else
+					setRoomWeight(area_rooms[i], 1)
+		--			echo(&quot;is &quot;..getRoomWeight(area_rooms[i])..&quot;\n&quot;)
+				end
+			end
+		end
+	end
+--echo(&quot;end&quot;)
+	local room_search = {}
+	room_search = getRoomsByPosition(YHR_areaID, yhraesheon_centerx,100-yhraesheon_centery,0)
+	centerview(room_search[0])
+end
+
+--FUNCTION FOR CALCULATING TURN COST
+yhraesheon_getturncost = function(first_dir, second_dir)
+	local first_val
+	local second_val
+	if first_dir == &quot;E&quot; then
+		first_val = 0
+	elseif first_dir == &quot;ENE&quot; then
+		first_val = 22.5
+	elseif first_dir == &quot;NE&quot; then
+		first_val = 45
+	elseif first_dir == &quot;NNE&quot; then
+		first_val = 67.5
+	elseif first_dir == &quot;N&quot; then
+		first_val = 90
+	elseif first_dir == &quot;NNW&quot; then
+		first_val = 112.5
+	elseif first_dir == &quot;NW&quot; then
+		first_val = 135
+	elseif first_dir == &quot;WNW&quot; then
+		first_val = 157.5
+	elseif first_dir == &quot;W&quot; then
+		first_val = 180
+	elseif first_dir == &quot;WSW&quot; then
+		first_val = 202.5
+	elseif first_dir == &quot;SW&quot; then
+		first_val = 225
+	elseif first_dir == &quot;SSW&quot; then
+		first_val = 247.5
+	elseif first_dir == &quot;S&quot; then
+		first_val = 270
+	elseif first_dir == &quot;SSE&quot; then
+		first_val = 292.5
+	elseif first_dir == &quot;SE&quot; then
+		first_val = 315
+	elseif first_dir == &quot;ESE&quot; then
+		first_val = 337.5
+	end
+	if second_dir == &quot;E&quot; then
+		second_val = 0
+	elseif second_dir == &quot;ENE&quot; then
+		second_val = 22.5
+	elseif second_dir == &quot;NE&quot; then
+		second_val = 45
+	elseif second_dir == &quot;NNE&quot; then
+		second_val = 67.5
+	elseif second_dir == &quot;N&quot; then
+		second_val = 90
+	elseif second_dir == &quot;NNW&quot; then
+		second_val = 112.5
+	elseif second_dir == &quot;NW&quot; then
+		second_val = 135
+	elseif second_dir == &quot;WNW&quot; then
+		second_val = 157.5
+	elseif second_dir == &quot;W&quot; then
+		second_val = 180
+	elseif second_dir == &quot;WSW&quot; then
+		second_val = 202.5
+	elseif second_dir == &quot;SW&quot; then
+		second_val = 225
+	elseif second_dir == &quot;SSW&quot; then
+		second_val = 247.5
+	elseif second_dir == &quot;S&quot; then
+		second_val = 270
+	elseif second_dir == &quot;SSE&quot; then
+		second_val = 292.5
+	elseif second_dir == &quot;SE&quot; then
+		second_val = 315
+	elseif second_dir == &quot;ESE&quot; then
+		second_val = 337.5
+	end
+	--echo(first_val)
+	--echo(second_val)
+	local test_val1
+	local test_val2
+	local test_val
+	if math.abs(second_val-first_val) &gt; 180 then
+		test_val1 = second_val+(360-first_val)
+		test_val2 = first_val + (360-second_val)
+	else
+		test_val1 = second_val - first_val
+		test_val2 = first_val - second_val
+	end
+	if math.abs(test_val1) &lt; math.abs(test_val2) then
+		test_val = math.abs(test_val1)
+	else
+		test_val = math.abs(test_val2)
+	end
+	--echo(test_val..&quot;\n&quot;)
+	local weight = math.floor(math.mod(test_val+360,360)/180*8)
+	return weight,math.mod(test_val+360,360)
+
+end
+
+
+--FUNCTION TO CALCULATE EUCLIDEAN DISTANCE BETWEEN 2 ROOM IDS
+yhraesheon_getdistance = function(room1, room2)
+	local x1, x2, y1, y2, z1, z2
+	x1,y1,z1 = getRoomCoordinates(room1)
+	x2,y2,z2 = getRoomCoordinates(room2)
+	local distance = math.sqrt((x2-x1)^2+(y2-y1)^2)
+	return distance
+end
+
+
+
+--FUNCTION FOR A* PATHFINDING
+yhraesheon_getpath = function ()
+	local yhraesheon_openset = {{}}
+	local yhraesheon_closedset = {}
+	local getRoomExits = getRoomExits
+	local getRoomWeight = getRoomWeight
+	local centerview = centerview
+	local yhraesheon_getturncost = yhraesheon_getturncost
+	local yhraesheon_getdistance = yhraesheon_getdistance
+	local room_search = getRoomsByPosition(YHR_areaID, yhraesheon_centerx, 100-yhraesheon_centery, 0)
+	local center_room = room_search[0]
+	--local thisexits = getRoomExits(room_search[0])
+	local closestdistance = 9999
+	yhraesheon_targetID = speedWalkPath[#speedWalkPath]
+	yhraesheon_targetx,yhraesheon_targety,yhraesheon_targetz = getRoomCoordinates(yhraesheon_targetID)
+	yhraesheon_openset[1] = {room_search[0]}
+	yhraesheon_openset[1].cost = 0
+	yhraesheon_openset[1].lastdir = yhraesheon_shipdir
+	ytime = ytime or createStopWatch()
+	startStopWatch(ytime)
+	while closestdistance &gt; 0.5 do
+
+--		local temp_openset = {{}}
+		--local kk = 1
+		--find node with lowest cost so far
+		local mincost = math.huge
+		local mincosti = -1
+		for i = 1,#yhraesheon_openset do
+			if yhraesheon_openset[i].cost &lt; mincost and yhraesheon_closedset[yhraesheon_openset[i][#yhraesheon_openset[i]]] ~= 1 then
+				mincost = yhraesheon_openset[i].cost
+				mincosti = i
+			end
+		end
+		--echo(mincosti)
+
+		--for i = 1,#yhraesheon_openset do
+			local thisexits = getRoomExits(yhraesheon_openset[mincosti][#yhraesheon_openset[mincosti]])
+			for k,v in pairs (thisexits) do
+				if yhraesheon_closedset[v] ~= 1 then
+					centerview(v)
+					local cost = yhraesheon_weightcoef*getRoomWeight(v) + yhraesheon_turncoef*yhraesheon_getturncost(yhraesheon_openset[mincosti].lastdir, yhraesheon_translatedir[k]) + yhraesheon_distancecoef*yhraesheon_getdistance(yhraesheon_targetID,v)
+					if yhraesheon_getdistance(yhraesheon_targetID,v) &lt; closestdistance then
+						closestdistance = yhraesheon_getdistance(yhraesheon_targetID,v)
+					end
+					--echo(cost)
+					yhraesheon_openset[#yhraesheon_openset+1] = {}
+					for ii = 1,#yhraesheon_openset[mincosti] do
+						yhraesheon_openset[#yhraesheon_openset][ii] = yhraesheon_openset[mincosti][ii]
+					end
+					yhraesheon_openset[#yhraesheon_openset][#yhraesheon_openset[#yhraesheon_openset]+1] = v
+					yhraesheon_openset[#yhraesheon_openset].cost = yhraesheon_openset[mincosti].cost + cost
+					yhraesheon_openset[#yhraesheon_openset].lastdir = yhraesheon_translatedir[k]
+					--temp_openset[kk] = {}
+					--for ii = 1,#yhraesheon_openset[i] do
+					--	temp_openset[kk][ii] = yhraesheon_openset[i][ii]
+					--end
+					--temp_openset[kk][#temp_openset[kk]+1] = v
+					--temp_openset[kk].cost = yhraesheon_openset[i].cost + cost
+					--temp_openset[kk].lastdir = yhraesheon_translatedir[k]
+					--kk = kk+1
+					--echo(&quot;a&quot;)
+					if closestdistance &lt; 0.5 then
+						yhraesheon_foundpath = #yhraesheon_openset
+						--echo(&quot;found&quot;)
+						break
+					end
+				end
+			end
+			--echo(&quot;\n&quot;..yhraesheon_openset[mincosti][#yhraesheon_openset[mincosti]])
+			--centerview(yhraesheon_openset[mincosti][#yhraesheon_openset[mincosti]])
+			if closestdistance &gt;= 0.5 then
+				yhraesheon_closedset[yhraesheon_openset[mincosti][#yhraesheon_openset[mincosti]]] = 1
+				--yhraesheon_openset[mincosti].cost = math.huge
+				local mincostival = yhraesheon_openset[mincosti][#yhraesheon_openset[mincosti]]
+				table.remove(yhraesheon_openset,mincosti)
+				local ii = 1
+				while ii &lt; #yhraesheon_openset do
+					if yhraesheon_openset[ii][#yhraesheon_openset[ii]] == mincostival then
+						table.remove(yhraesheon_openset,ii)
+						ii = ii-1
+					end
+					ii = ii+1
+				end
+			end
+			--end
+			--yhraesheon_openset = {}
+			--yhraesheon_openset = temp_openset
+		end
+	centerview(center_room)
+	local endtime = stopStopWatch(ytime)
+	cecho(&quot;&lt;slate_gray&gt;[]: Path calculation took &quot;..endtime..&quot; seconds.&quot;)
+
+	for i = 1,#lasthighlightroom do
+		unHighlightRoom(lasthighlightroom[i])
+	end
+	yhraesheonspeedWalkPath = {}
+
+	local highlightRoom = highlightRoom
+	local r,g,b = unpack(color_table.yellow)
+	local br,bg,bb = unpack(color_table.yellow)
+
+	for i = 1,#yhraesheon_openset[yhraesheon_foundpath] do
+		highlightRoom(yhraesheon_openset[yhraesheon_foundpath][i],r,g,b,br,bg,bb,0.7,255,255)
+		yhraesheonspeedWalkPath[i] = yhraesheon_openset[yhraesheon_foundpath][i]
+	end
+	lasthighlightroom = yhraesheon_openset[yhraesheon_foundpath]
+end
+
+
+
+--FUNCTION TO ITERATE FOR SHIP TRACKING
+yhraesheon_shipwalk = function ()
+	local room_search2 = {}
+	local YHR_roomID2
+	room_search2 = getRoomsByPosition(YHR_areaID, yhraesheon_centerx, 100-yhraesheon_centery, 0)
+	YHR_roomID2 = room_search2[0]
+	if yhraesheonspeedWalkPath ~= nil then
+		--for k,v in pairs (yhraesheonspeedWalkPath) do
+		local i = 1
+		while (i &lt;= #yhraesheonspeedWalkPath) do
+			if yhraesheonspeedWalkPath[i] ~= YHR_roomID2 then
+				table.remove(yhraesheonspeedWalkPath,i)
+				if #yhraesheonspeedWalkPath &gt; 1 then
+					table.remove(yhraesheonspeedWalkDir,i)
+				end
+				i = i-1
+			else
+				break
+			end
+			i = i+1
+		end
+	end
+	if #yhraesheonspeedWalkPath == 0 then
+		echo(&quot;\nrecalculating path&quot;)
+		yhraesheon_setwallweights()
+		yhraesheon_getpath()
+		yhraesheonspeedWalkDir = {}
+		for i = 2,#yhraesheonspeedWalkPath do
+			local thisexits = getRoomExits(yhraesheonspeedWalkPath[i-1])
+			for k,v in pairs (thisexits) do
+				if v == yhraesheonspeedWalkPath[i] then
+					yhraesheonspeedWalkDir[i-1] = k
+					break
+				end
+			end
+		end
+	end
+	--local factor = yhraesheon_shipspeed/13
+	--cutter turning speed is about 22.5 degrees in 0.815 seconds
+	if yhraesheon_shipspeed &gt; 0 then
+		--local factor = yhraesheon_factor/yhraesheon_shipspeed --estimate of turns/room movement
+		--local trash,angle = yhraesheon_getturncost(yhraesheon_shipdir, yhraesheon_translatedir[yhraesheonspeedWalkDir[math.ceil(2)]])
+		local turn_factor = 22.5/(yhraesheon_turnspeed) -- this is the number of seconds it will take to turn angle
+		local speed_factor = (-0.1857*yhraesheon_shipspeed+6.8786)*1.1 -- this is the number of seconds it will take to move
+		local factor = turn_factor/speed_factor
+		--cecho(&quot;&lt;slate_gray&gt;Estimated turn time = &quot;..turn_factor..&quot;, estimated movement time = &quot;..speed_factor..&quot;, turning &quot;..factor..&quot; steps ahead.&quot;)
+		if factor &gt; #yhraesheonspeedWalkDir then
+			factor = #yhraesheonspeedWalkDir
+		elseif factor &lt;= 0 then
+			factor = 1
+		end
+		if yhraesheon_translatedir[yhraesheonspeedWalkDir[math.ceil(factor)]] ~= yhraesheon_shipdir then
+			send(&quot;ship turn &quot;..yhraesheonspeedWalkDir[math.ceil(factor)], false)
+		end
+	else
+		if yhraesheon_translatedir[yhraesheonspeedWalkDir[1]] ~= yhraesheon_shipdir then
+			send(&quot;ship turn &quot;..yhraesheonspeedWalkDir[1], false)
+		end
+		if yhraesheon_shipdir == yhraesheon_translatedir[yhraesheonspeedWalkDir[1]] then
+			send(&quot;ship row&quot;, false)
+			--send(&quot;ship row&quot;, false)
+		end
+	end
+end
+
+
+-- FUNCTION TO RE-CENTER MAP
+yhraesheon_recenter = function(x,y)
+	yhraesheon_centerx = x
+	yhraesheon_centery = 100-y
+end
+
+
+-- FUNCTION TO PRINT MAP IN BACKGROUND
+yhraesheon_printmap = function ()
+	local chars, createMapLabel
+		= chars, createMapLabel
+
+	for i = 1,#chars do
+		for ii = 1,#chars[#chars] do
+			if chars[i][ii] ~= &quot; &quot; then
+				createMapLabel(YHR_areaID,&quot; &quot;..chars[i][ii]..&quot;  &quot;,yhraesheon_centerx-math.floor(yhraesheon_shipmapwidth/2)-1+ii-0.5,100-yhraesheon_centery+math.floor(yhraesheon_shipmapheight/2)+1-i+0.5,0,color[i][ii][1],color[i][ii][2],color[i][ii][3], color[i][ii][4], color[i][ii][5], color[i][ii][6],13, 0,true,false)
+			end
+		end
+	end
+end
+
+
+--FUNTION TO DELETE MAP LABELS
+yhraesheon_deletemaplabels = function ()
+	local labels = {}
+	if YHR_areaID then
+		labels = getMapLabels(YHR_areaID)
+	end
+	local deleteMapLabel = deleteMapLabel
+	for i = 1,#labels do
+		deleteMapLabel(YHR_areaID, i)
+	end
+	deleteMapLabel(YHR_areaID,0)
+end
+
+-- function quicker than createRoomID() with a little cache
+yhlastroomid = yhlastroomid or 50000
+yhraesheon_createroomid = function ()
+  -- local yhlastroomid = yhlastroomid
+
+  if not yhlastroomid then
+  	yhlastroomid = createRoomID()
+  else
+  	-- see if we can cheat with a cache
+  	if not roomExists(yhlastroomid+1) then
+  		yhlastroomid = yhlastroomid+1
+  	else
+  		yhlastroomid = createRoomID()
+  	end
+  end
+
+  return yhlastroomid
+end
+
+
+--FUNCTION TO PRINT MAP IN BACKGROUND USING ROOMS
+yhraesheon_printmaprooms = function ()
+	local chars, yhraesheon_otherrooms, floor = chars, yhraesheon_otherrooms, math.floor
+	local yhraesheon_shipmapwidth, yhraesheon_centerx, yhraesheon_shipmapheight = yhraesheon_shipmapwidth, yhraesheon_centerx, yhraesheon_shipmapheight
+	local roomExists = roomExists
+	local lastroomid
+
+	local addRoom, yhraesheon_createroomid, setRoomCoordinates, setRoomArea, setRoomEnv, highlightRoom, setRoomChar, lockRoom
+		= addRoom, yhraesheon_createroomid, setRoomCoordinates, setRoomArea, setRoomEnv, highlightRoom, setRoomChar, lockRoom
+
+	for i = 1,#chars do
+		for ii = 1,#chars[#chars] do
+			local char = chars[i][ii]
+
+			if char ~= &quot; &quot; and char ~= &quot;?&quot; and char ~= &quot;=&quot; and (yhraesheon_otherrooms[yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii] == nil or yhraesheon_otherrooms[yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii][100-yhraesheon_centery+floor(yhraesheon_shipmapheight/2)+1-i] == nil) and (yhraesheon_rooms[yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii] == nil or yhraesheon_rooms[yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii][100-yhraesheon_centery+floor(yhraesheon_shipmapheight/2)+1-i] == nil) then
+
+				local roomID = yhraesheon_createroomid()
+
+				addRoom(roomID)
+				setRoomCoordinates(roomID,yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii,100-yhraesheon_centery+floor(yhraesheon_shipmapheight/2)+1-i,0)
+				setRoomArea(roomID, YHR_areaID)
+				setRoomEnv(roomID, 264)
+				highlightRoom(roomID, color[i][ii][1], color[i][ii][2], color[i][ii][3], color[i][ii][4], color[i][ii][5], color[i][ii][6], 1, 100, 100)
+				setRoomChar(roomID, char)
+				lockRoom(roomID,true)
+				if yhraesheon_otherrooms[yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii] == nil then
+					yhraesheon_otherrooms[yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii] = {}
+				end
+				yhraesheon_otherrooms[yhraesheon_centerx-floor(yhraesheon_shipmapwidth/2)-1+ii][100-yhraesheon_centery+floor(yhraesheon_shipmapheight/2)+1-i] = roomID
+			end
+		end
+	end
+end
+
+
+--FUNCTION TO MATCH MOVING MAP
+yhraesheon_shipmatch = function ()
+	local testmatrix = {}
+	testmatrix[1] = {1,0}
+	testmatrix[1].direction = &quot;east&quot;
+	testmatrix[2] = {0,1}
+	testmatrix[2].direction = &quot;north&quot;
+	testmatrix[3] = {-1,0}
+	testmatrix[3].direction = &quot;west&quot;
+	testmatrix[4] = {0,-1}
+	testmatrix[4].direction = &quot;south&quot;
+	testmatrix[5] = {1,1}
+	testmatrix[5].direction = &quot;northeast&quot;
+	testmatrix[6] = {1,-1}
+	testmatrix[6].direction = &quot;southeast&quot;
+	testmatrix[7] = {-1,1}
+	testmatrix[7].direction = &quot;northwest&quot;
+	testmatrix[8] = {-1,-1}
+	testmatrix[8].direction = &quot;southwest&quot;
+	testmatrix[9] = {2,0}
+	testmatrix[9].direction = &quot;two east&quot;
+	testmatrix[10] = {2,1}
+	testmatrix[10].direction = &quot;two ENE&quot;
+	testmatrix[11] = {2,2}
+	testmatrix[11].direction = &quot;two northeast&quot;
+	testmatrix[12] = {2,-1}
+	testmatrix[12].direction = &quot;two ESE&quot;
+	testmatrix[13] = {2,-2}
+	testmatrix[13].direction = &quot;two southeast&quot;
+	testmatrix[14] = {1,2}
+	testmatrix[14].direction = &quot;two NNE&quot;
+	testmatrix[15] = {0,2}
+	testmatrix[15].direction = &quot;two north&quot;
+	testmatrix[16] = {-1,2}
+	testmatrix[16].direction = &quot;two NNW&quot;
+	testmatrix[17] = {-2,2}
+	testmatrix[17].direction = &quot;two northwest&quot;
+	testmatrix[18] = {-2,1}
+	testmatrix[18].direction = &quot;two WNW&quot;
+	testmatrix[19] = {-2,0}
+	testmatrix[19].direction = &quot;two west&quot;
+	testmatrix[20] = {-2,-1}
+	testmatrix[20].direction = &quot;two WSW&quot;
+	testmatrix[21] = {-2,-2}
+	testmatrix[21].direction = &quot;two southwest&quot;
+	testmatrix[22] = {-1,-2}
+	testmatrix[22].direction = &quot;two SSW&quot;
+	testmatrix[23] = {0,-2}
+	testmatrix[23].direction = &quot;two south&quot;
+	testmatrix[24] = {1,-2}
+	testmatrix[24].direction = &quot;two SSE&quot;
+	testmatrix[25] = {0,0}
+	testmatrix[25].direction = &quot;no movement&quot;
+	local startind_y = 1
+	local endind_y = 25
+	local startind_x = 1
+	local endind_x = 25
+	if yhraesheon_shipmapheightchange &gt; 0 then
+		startind_y = 3+yhraesheon_shipmapheightchange/2
+		endind_y = #chars-2-yhraesheon_shipmapheightchange/2
+		startind_x = 3+yhraesheon_shipmapwidthchange/2
+		endind_x = #chars[#chars]-2-yhraesheon_shipmapwidthchange/2
+	elseif yhraesheon_shipmapheightchange &gt; -3 then
+		startind_y = 3
+		endind_y = #chars-2
+		startind_x = 3
+		endind_x = #chars[#chars]-2
+	else
+		startind_y = 3-yhraesheon_shipmapheightchange/2
+		endind_y = #chars-2+yhraesheon_shipmapheightchange/2
+		startind_x = 3-yhraesheon_shipmapwidthchange/2
+		endind_x = #chars[#chars]-2+yhraesheon_shipmapwidthchange/2
+	end
+
+	local x_offset = yhraesheon_offset.east-yhraesheon_offset.west
+	local y_offset = yhraesheon_offset.north-yhraesheon_offset.south
+	for i = 1, yhraesheon_offset.northeast do
+		x_offset = x_offset + 1
+		y_offset = y_offset + 1
+	end
+	for i = 1, yhraesheon_offset.southeast do
+		x_offset = x_offset + 1
+		y_offset = y_offset - 1
+	end
+	for i = 1, yhraesheon_offset.northwest do
+		x_offset = x_offset - 1
+		y_offset = y_offset + 1
+	end
+	for i = 1, yhraesheon_offset.southwest do
+		x_offset = x_offset - 1
+		y_offset = y_offset - 1
+	end
+
+	if x_offset == 0 and y_offset == 0 then
+		cecho(&quot;\n&lt;slate_gray&gt;[]: No cardinal/ordinal movement detected.&quot;)
+		return
+	end
+
+	if x_offset &gt; 2 or y_offset &gt; 2 then
+		cecho(&quot;\n&lt;slate_gray&gt;[]: You moved too far for me to track. Building map based on your movement.&quot;)
+		return
+	else
+		local shipmapmatch = true
+		for i = startind_y,endind_y do
+			for ii = startind_x,endind_x do
+				if chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot; then
+					if yhraesheon_rooms[yhraesheon_centerx - math.floor(#chars[#chars]/2) - 1 + ii + x_offset] == nil or yhraesheon_rooms[yhraesheon_centerx - math.floor(#chars[#chars]/2) - 1 + ii + x_offset][100 - yhraesheon_centery + math.floor(#chars/2) + 1 - i + y_offset] == nil then
+						shipmapmatch = false
+						break
+					end
+				end
+			end
+				if shipmapmatch == false then
+				break
+			end
+		end
+		if shipmapmatch == true then
+			cecho(&quot;\n&lt;slate_gray&gt;[]: Ship movement &quot;..lastshipmovement..&quot; confirmed.&quot;)
+		else
+			for iii = 1,25 do
+				local shipmapmatch = true
+				local atleastoneroomfound = false
+				for i = startind_y,endind_y do
+					for ii = startind_x,endind_x do
+						if chars[i][ii] == &quot; &quot; or chars[i][ii] == &quot;=&quot; or chars[i][ii] == &quot;?&quot; then
+							atleastoneroomfound = true
+							if yhraesheon_rooms[yhraesheon_centerx - math.floor(#chars[#chars]/2) - 1 + ii + testmatrix[iii][1]] == nil or yhraesheon_rooms[yhraesheon_centerx - math.floor(#chars[#chars]/2) - 1 + ii + testmatrix[iii][1]][100 - yhraesheon_centery + math.floor(#chars/2) + 1 - i + testmatrix[iii][2]] == nil then
+								shipmapmatch = false
+								break
+							end
+						end
+					end
+				if shipmapmatch == false then
+						break
+					end
+				end
+				if shipmapmatch == true and atleastoneroomfound == true then
+					cecho(&quot;\n&lt;slate_gray&gt;[]: Off track. Ship movement &quot;..testmatrix[iii].direction..&quot; detected.&quot;)
+					yhraesheon_offset = {
+						east = 0,
+						northeast = 0,
+						north = 0,
+						northwest = 0,
+						west = 0,
+						southwest = 0,
+						south = 0,
+						southeast = 0,
+					}
+					if testmatrix[iii][1] &gt; 0 then
+						yhraesheon_offset.east = testmatrix[iii][1]
+					elseif testmatrix[iii][1] &lt; 0 then
+						yhraesheon_offset.west = math.abs(testmatrix[iii][1])
+					end
+					if testmatrix[iii][2] &gt; 0 then
+						yhraesheon_offset.north = testmatrix[iii][2]
+					elseif testmatrix[iii][2] &lt; 0 then
+						yhraesheon_offset.south = math.abs(testmatrix[iii][2])
+					end
+
+					break
+				end
+			end
+			cecho(&quot;\n&lt;slate_gray&gt;[]: No match found, building map based on movement.&quot;)
+		end
+	end
+end
+
+
+-- FUNCTION TO HIGHLIGHT OTHER SHIPS
+yhraesheon_otherships = function ()
+	local unHighlightRoom, highlightRoom, chars, ceil =
+		unHighlightRoom, highlightRoom, chars, math.ceil
+
+	for k,v in pairs (yhraesheon_shiphighlight) do
+		unHighlightRoom(k)
+	end
+	yhraesheon_shiphighlight = {}
+	for i = 1,#chars do
+		for ii = 1,#chars[#chars] do
+			if chars[i][ii] == &quot;=&quot; and (i ~= ceil(#chars/2) or ii ~= ceil(#chars[#chars]/2)) then
+				highlightRoom(yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery+ceil(#chars/2)-i], 255,0,255,100,0,100,2,255,255)
+				yhraesheon_shiphighlight[yhraesheon_rooms[yhraesheon_centerx-ceil(#chars[#chars]/2)+ii][100-yhraesheon_centery+ceil(#chars/2)-i]] = 1
+			end
+		end
+	end
+end
+
+
+</script>
+                    <eventHandlerList/>
+                </Script>
+            </ScriptGroup>
+        </ScriptGroup>
+    </ScriptPackage>
+    <KeyPackage/>
+</MudletPackage>
